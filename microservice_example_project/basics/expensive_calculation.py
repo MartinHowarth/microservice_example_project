@@ -9,7 +9,7 @@ import random
 import threading
 import time
 
-from microservice import microservice, initialise_interface
+from microservice import microservice, initialise_interface, terminate_interface
 
 
 app = flask.Flask(__name__)
@@ -40,5 +40,6 @@ def homepage():
 
 
 if __name__ == "__main__":
-    app.run(threaded=True)
     initialise_interface(__name__)
+    app.run(threaded=True)
+    terminate_interface()
