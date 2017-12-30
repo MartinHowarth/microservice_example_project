@@ -1,7 +1,7 @@
 import datetime
 import flask
 
-from microservice import microservice
+from microservice import microservice, initialise_interface
 
 
 app = flask.Flask(__name__)
@@ -44,3 +44,4 @@ def time():
 
 if __name__ == "__main__":
     app.run(threaded=True)
+    initialise_interface(__name__)
