@@ -1,6 +1,8 @@
 import datetime
 import flask
 
+from time import sleep
+
 from microservice import (microservice, initialise_interface, terminate_interface, create_deployment,
                           destroy_deployment, configure_logging)
 
@@ -17,6 +19,7 @@ def hints(host, port):
     http://{host}:{port}/hello/World
     http://{host}:{port}/time
     http://{host}:{port}/bottles/99
+    http://{host}:{port}/ticktock/99
     """.format(host=host, port=port)
 
 
@@ -31,6 +34,22 @@ def green_bottles(song, num_bottles):
 @microservice
 def decrementer(number):
     return number - 1
+
+
+@microservice
+def tick(text, counter):
+    if counter > 0:
+        text += "tick: {}<br/>".format(counter)
+        return tock(text, decrementer(counter))
+    return text
+
+
+@microservice
+def tock(text, counter):
+    if counter > 0:
+        text += "tock: {}<br/>".format(counter)
+        return tick(text, decrementer(counter))
+    return text
 
 
 @microservice
@@ -73,11 +92,18 @@ def bottles(num_bottles):
     return green_bottles("", num_bottles)
 
 
+@app.route('/ticktock/<int:counter>/')
+def ticktock(counter):
+    return tick("", counter)
+
+
 all_microservices = [
     'microservice_example_project.basics.basic_website.hello_name_service',
     'microservice_example_project.basics.basic_website.hello_world_service',
     'microservice_example_project.basics.basic_website.time_of_day_service',
     'microservice_example_project.basics.basic_website.green_bottles',
+    'microservice_example_project.basics.basic_website.tick',
+    'microservice_example_project.basics.basic_website.tock',
     'microservice_example_project.basics.basic_website.decrementer',
     'microservice_example_project.basics.basic_website.hints',
 ]
@@ -88,6 +114,7 @@ def main():
     initialise_interface(__name__)
     create_deployment(all_microservices)
 
+    sleep(1)  # Wait for the services to initialise
     print(hints('127.0.0.1', 4000))
 
     app.run(threaded=True, port=4000)
