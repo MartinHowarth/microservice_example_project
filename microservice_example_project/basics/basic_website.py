@@ -97,22 +97,12 @@ def ticktock(counter):
     return tick("", counter)
 
 
-all_microservices = [
-    'microservice_example_project.basics.basic_website.hello_name_service',
-    'microservice_example_project.basics.basic_website.hello_world_service',
-    'microservice_example_project.basics.basic_website.time_of_day_service',
-    'microservice_example_project.basics.basic_website.green_bottles',
-    'microservice_example_project.basics.basic_website.tick',
-    'microservice_example_project.basics.basic_website.tock',
-    'microservice_example_project.basics.basic_website.decrementer',
-    'microservice_example_project.basics.basic_website.hints',
-]
-
-
 def main():
     configure_logging(__name__)
     initialise_interface(__name__)
-    create_deployment(all_microservices)
+
+    # Must have imported all modules that contain microservices before this point for auto-detection to work.
+    create_deployment()
 
     sleep(1)  # Wait for the services to initialise
     print(hints('127.0.0.1', 4000))
